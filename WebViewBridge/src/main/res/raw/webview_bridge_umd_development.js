@@ -22,12 +22,12 @@
           var s = JSON.stringify(m);
           try {
             // android
-            wind["webviewbridge/" + _this.namespace].postMessage(s);
+            wind["com.neutronstarer.webviewbridge/" + _this.namespace].postMessage(s);
             return;
           } catch (_) {}
           try {
             // ios
-            wind.webkit.messageHandlers.webviewbridge.postMessage(s);
+            wind.webkit.messageHandlers["com.neutronstarer.webviewbridge"].postMessage(s);
             return;
           } catch (_) {}
           // other

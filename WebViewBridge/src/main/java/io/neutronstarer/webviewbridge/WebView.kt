@@ -3,7 +3,8 @@ package com.neutronstarer.webviewbridge
 import android.net.Uri
 import android.webkit.JavascriptInterface
 import android.webkit.WebView
-import org.json.JSONObject
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
 
 enum class BridgePolicy {
     Cancel,
@@ -31,11 +32,11 @@ fun WebView.bridgePolicyOf(uri: Uri): BridgePolicy {
 }
 
 internal fun WebView.initializeWith(bridge: WebViewBridge){
-    val namespace = bridge.namespace
-    this.removeJavascriptInterface(namespace)
+    val name = "com.neutronstarer.webviewbridge/"+ bridge.namespace
+    this.removeJavascriptInterface(name)
     this.addJavascriptInterface(InterfaceObject {
         bridge.receive(it)
-    }, namespace)
+    }, name)
 }
 
 internal fun WebView.bridgeOf(namespace: String, creatable: Boolean): WebViewBridge? {
@@ -52,15 +53,15 @@ internal fun WebView.bridgeOf(namespace: String, creatable: Boolean): WebViewBri
 }
 
 private class InterfaceObject(val receive: (message: Map<String, Any>?)->Unit){
-    @Suppress("unused")
+    @Suppress("unused", "unchecked_cast")
     @JavascriptInterface
     fun postMessage(arg: String?){
         if (arg == null){
             return
         }
         try {
-            val json = JSONObject(arg)
-            receive(json.toMap())
+            val m = Json.decodeFromString<Map<String,Any>>(arg)
+            receive(m)
         }catch (_: java.lang.Exception){
 
         }
