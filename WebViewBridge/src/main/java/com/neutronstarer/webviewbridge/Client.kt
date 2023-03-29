@@ -6,7 +6,6 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.lang.ref.WeakReference
 
-typealias BridgeHandle = (client: Client, param: Any?, reply: Reply, notify: Notify) -> Cancel?
 
 /**
  * Client

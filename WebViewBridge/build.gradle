@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace 'io.neutronstarer.webviewbridge'
+    namespace 'com.neutronstarer.webviewbridge'
     compileSdk 33
 
     defaultConfig {

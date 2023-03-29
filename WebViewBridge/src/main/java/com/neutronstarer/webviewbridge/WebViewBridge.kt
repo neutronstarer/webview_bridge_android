@@ -1,11 +1,14 @@
 package com.neutronstarer.webviewbridge
 
 import android.webkit.WebView
+import com.neutronstarer.npc.Cancel
 import com.neutronstarer.npc.Notify
 import com.neutronstarer.npc.Reply
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import java.lang.ref.WeakReference
+
+typealias BridgeHandle = (client: Client, param: Any?, reply: Reply, notify: Notify) -> Cancel?
 
 class WebViewBridge(val namespace: String, webView: WebView) {
     private var weakWebView: WeakReference<WebView>
