@@ -57,7 +57,7 @@
         document.documentElement.appendChild(iframe);
         setTimeout(function () {
           document.documentElement.removeChild(iframe);
-        }, 1);
+        }, 200);
       };
       this.messages = [];
       this.namespace = namespace;
