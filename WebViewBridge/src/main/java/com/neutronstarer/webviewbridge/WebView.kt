@@ -3,8 +3,7 @@ package com.neutronstarer.webviewbridge
 import android.net.Uri
 import android.webkit.JavascriptInterface
 import android.webkit.WebView
-import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.json.Json
+import org.json.JSONObject
 
 enum class BridgePolicy {
     Cancel,
@@ -60,10 +59,10 @@ private class InterfaceObject(val receive: (message: Map<String, Any>?)->Unit){
             return
         }
         try {
-            val m = Json.decodeFromString<Map<String,Any>>(arg)
+            val m = JSONObject(arg).toMap()
             receive(m)
-        }catch (_: java.lang.Exception){
-
+        }catch (e: java.lang.Exception){
+            error(e)
         }
     }
 }

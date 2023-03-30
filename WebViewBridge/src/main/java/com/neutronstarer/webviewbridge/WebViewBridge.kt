@@ -1,11 +1,10 @@
 package com.neutronstarer.webviewbridge
 
+import android.os.Handler
+import android.os.Looper
 import android.webkit.WebView
-import com.neutronstarer.npc.Cancel
-import com.neutronstarer.npc.Notify
-import com.neutronstarer.npc.Reply
-import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.json.Json
+import com.neutronstarer.npc.*
+import org.json.JSONObject
 import java.lang.ref.WeakReference
 
 typealias BridgeHandle = (client: Client, param: Any?, reply: Reply, notify: Notify) -> Cancel?
@@ -58,18 +57,24 @@ class WebViewBridge(val namespace: String, webView: WebView) {
         }
     }
     internal fun load(){
-        weakWebView.get()?.evaluateJavascript(loadJS) {
+        val handler = Handler(Looper.getMainLooper())
+        handler.post {
+            weakWebView.get()?.evaluateJavascript(loadJS) {
+            }
         }
     }
 
     @Suppress("UNCHECKED_CAST")
     internal fun query(){
-        weakWebView.get()?.evaluateJavascript(queryJS) { it ->
-            try {
-                val m = Json.decodeFromString<Map<String,Any>>(it)
-                receive(m)
-            }catch (_: Exception){
+        val handler = Handler(Looper.getMainLooper())
+        handler.post {
+            weakWebView.get()?.evaluateJavascript(queryJS) { it ->
+                try {
+                    val m = JSONObject(it).toMap()
+                    receive(m)
+                }catch (_: Exception){
 
+                }
             }
         }
     }
@@ -82,7 +87,7 @@ class WebViewBridge(val namespace: String, webView: WebView) {
         when(typ){
             "transmit" -> {
                 val client = clientById[from] ?: return
-                val body = message["body"] as? Map<String,Any> ?: return
+                val body = m["body"] as? Map<String,Any> ?: return
                 client.receive(body)
             }
             "connect" -> {
