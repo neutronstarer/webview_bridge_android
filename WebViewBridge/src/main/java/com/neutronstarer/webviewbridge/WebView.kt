@@ -1,6 +1,8 @@
 package com.neutronstarer.webviewbridge
 
 import android.net.Uri
+import android.os.Handler
+import android.os.Looper
 import android.webkit.JavascriptInterface
 import android.webkit.WebView
 import org.json.JSONObject
@@ -60,9 +62,13 @@ private class InterfaceObject(val receive: (message: Map<String, Any>?)->Unit){
         }
         try {
             val m = JSONObject(arg).toMap()
-            receive(m)
+            handler.post {
+                receive(m)
+            }
         }catch (e: java.lang.Exception){
             error(e)
         }
     }
+
+    private val handler = Handler(Looper.getMainLooper())
 }

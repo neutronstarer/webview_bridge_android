@@ -13,6 +13,7 @@ class WebViewBridge(val namespace: String, webView: WebView) {
     private var weakWebView: WeakReference<WebView>
     private val handles = mutableMapOf<String, BridgeHandle>()
     private val clientById = mutableMapOf<String, Client>()
+    private val handler = Handler(Looper.getMainLooper())
     private val loadJS by lazy {
         val inputStream = if (BuildConfig.DEBUG){
             webView.context.resources.openRawResource(R.raw.webview_bridge_umd_development)
@@ -57,7 +58,6 @@ class WebViewBridge(val namespace: String, webView: WebView) {
         }
     }
     internal fun load(){
-        val handler = Handler(Looper.getMainLooper())
         handler.post {
             weakWebView.get()?.evaluateJavascript(loadJS) {
             }
@@ -66,7 +66,6 @@ class WebViewBridge(val namespace: String, webView: WebView) {
 
     @Suppress("UNCHECKED_CAST")
     internal fun query(){
-        val handler = Handler(Looper.getMainLooper())
         handler.post {
             weakWebView.get()?.evaluateJavascript(queryJS) { it ->
                 try {
